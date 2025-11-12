@@ -3,7 +3,7 @@
 // ===================================
 
 const express = require("express");
-const cors = require("cors");
+const cors = require("cors"); // <--- 1. Import cors
 require("dotenv").config(); // .env อยู่ในโฟลเดอร์ api/ นี้แล้ว
 
 // เพิ่มการนำเข้า autoStatusScheduler เพื่อเริ่มต้นการทำงาน จับเวลาในการ อัพเดต Status อัตโนมัติ 
@@ -35,6 +35,9 @@ app.use((req, res, next) => {
 // Routes
 // ===================================
 
+// CORS configuration สั่งให้ Express "ใช้" cors
+app.use(cors());
+
 // Health check endpoint
 app.get("/", (req, res) => {
   res.json({
@@ -43,6 +46,7 @@ app.get("/", (req, res) => {
     // ... (ส่วนที่เหลือเหมือนเดิม) ...
   });
 });
+
 
 // API routes
 app.use("/api", routes);
