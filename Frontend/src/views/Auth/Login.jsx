@@ -19,22 +19,21 @@ export default function Login() {
     setError('');
     setLoading(true);
 
-    try {
-        // เรียกใช้ login function จาก authService
+   try {
       const data = await login(username, password);
       
-      // 🔽🔽🔽 แก้ไขบรรทัดนี้ 🔽🔽🔽
-      console.log('✅ Login successful:', data); // เปลี่ยนจาก data.user เป็น data
+      // `data` คือ { success: true, data: { token: '...', user: {...} } }
+      console.log('✅ Login successful:', data.data.user); // 🔽 แก้ไข
       
-      // 🔽🔽🔽 และแก้ไขบรรทัดนี้ 🔽🔽🔽
-      const userRole = data.role; // เปลี่ยนจาก data.user.role เป็น data.role
+      // Redirect ตาม role
+      const userRole = data.data.user.role; // 🔽🔽 แก้ไขเป็น data.data.user.role
       
-      if (userRole === 'staff' || userRole === 'admin') {
+      if (userRole === 'staff') {
         navigate('/staff');
-      } else if (userRole === 'user') {
-        navigate('/user');
+      } else if (userRole === 'admin') {
+        navigate('/admin');
       } else {
-        navigate('/staff'); // default
+        navigate('/user'); // default
       }
     } catch (err) {
       console.error('❌ Login error:', err);
