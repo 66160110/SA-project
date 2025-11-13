@@ -1,0 +1,287 @@
+/* ===================================
+   Staff Home Page Styles
+   ไฟล์: src/views/Staffs/StaffHome.css
+   =================================== */
+
+.staff-home {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* ===================================
+   Header
+   =================================== */
+.staff-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 40px;
+  background: rgba(91, 50, 150, 0.8);
+  backdrop-filter: blur(10px);
+}
+
+.header-left h1 {
+  color: white;
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.notification-icon {
+  position: relative;
+  font-size: 24px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.notification-icon:hover {
+  transform: scale(1.1);
+}
+
+.notification-icon .badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: #f5222d;
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  padding: 2px 6px;
+  border-radius: 10px;
+  min-width: 20px;
+  text-align: center;
+}
+
+.user-profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: white;
+  padding: 8px 16px;
+  border-radius: 24px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.user-profile:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.user-profile img {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.user-profile span {
+  font-weight: 600;
+  color: #333;
+}
+
+.dropdown-icon {
+  font-size: 12px;
+  color: #666;
+}
+
+/* ===================================
+   Content Container
+   =================================== */
+.content-container {
+  max-width: 1400px;
+  margin: 40px auto;
+  padding: 0 40px;
+}
+
+.controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.all-ticket-btn {
+  background: rgba(91, 50, 150, 0.9);
+  color: white;
+  border: none;
+  padding: 12px 32px;
+  border-radius: 24px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.all-ticket-btn:hover {
+  background: rgba(91, 50, 150, 1);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(91, 50, 150, 0.4);
+}
+
+.sort-dropdown {
+  background: rgb(91, 50, 150, 0.9);
+  /* border: 2px solid #e0e0e0; */
+  padding: 10px 20px;
+  border-radius: 12px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.sort-dropdown:hover {
+  border-color: #764ba2;
+}
+
+.sort-dropdown:focus {
+  outline: none;
+  border-color: #764ba2;
+  box-shadow: 0 0 0 3px rgba(118, 75, 162, 0.1);
+}
+
+/* ===================================
+   Ticket Table
+   =================================== */
+.ticket-table-container {
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.ticket-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.ticket-table thead {
+  background: rgba(91, 50, 150, 0.9);
+  color: white;
+}
+
+.ticket-table th {
+  padding: 16px;
+  /* text-align: left; */
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.ticket-table tbody tr {
+  border-bottom: 1px solid #f0f0f0;
+  transition: background 0.2s;
+}
+
+.ticket-table tbody tr:hover {
+  background: #f8f9ff;
+}
+
+.ticket-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.ticket-table td {
+  padding: 16px;
+  font-size: 14px;
+  color: #333;
+}
+
+.ticket-title {
+  font-weight: 500;
+  color: #1a1a1a;
+}
+
+/* ===================================
+   Badges
+   =================================== */
+.status-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  background: #e8f4fd;
+  color: #1890ff;
+}
+
+.priority-badge {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+/* ===================================
+   View Button
+   =================================== */
+.view-btn {
+  background: #667eea;
+  color: white;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.view-btn:hover {
+  background: #5568d3;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+/* ===================================
+   Loading & Error States
+   =================================== */
+.loading, .error {
+  text-align: center;
+  padding: 60px 20px;
+  color: white;
+  font-size: 18px;
+}
+
+.error {
+  background: rgba(245, 34, 45, 0.1);
+  border-radius: 12px;
+  margin: 40px;
+}
+
+.error button {
+  margin-top: 16px;
+  background: white;
+  color: #f5222d;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* ===================================
+   Responsive Design
+   =================================== */
+@media (max-width: 768px) {
+  .staff-header {
+    flex-direction: column;
+    gap: 16px;
+    padding: 16px 20px;
+  }
+
+  .content-container {
+    padding: 0 20px;
+  }
+
+  .ticket-table-container {
+    overflow-x: auto;
+  }
+
+  .ticket-table {
+    min-width: 800px;
+  }
+}

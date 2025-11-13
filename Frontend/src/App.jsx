@@ -10,6 +10,9 @@ import Login from "./views/Auth/Login.jsx";
 // import StaffHome from "./views/Staffs/StaffHome.jsx";
 import AdminPage from "./views/Admins/adminpage.jsx"; // 🆕 เพิ่ม Admin
 
+// Import หน้า Ticket Detail เข้ามา
+import StaffTicketDetail from "./views/Staffs/StaffTicketDetail.jsx";
+
 function App() {
   return (
     <BrowserRouter>
@@ -22,7 +25,17 @@ function App() {
         
         {/* Staff Routes */}
         {/* <Route path="/staff/*" element={<StaffHome />} /> */}
+       {/* Staff Routes */}
         
+        {/* path="/staff"  สำหรับหน้าตาราง StaffHome */}
+        <Route path="/staff" element={<StaffHome />} /> 
+        
+        {/* path="/staff/tickets/:ticketId" สำหรับหน้าดูรายละเอียด */}
+        <Route 
+          path="/staff/tickets/:ticketId" 
+          element={<StaffTicketDetail />} 
+        />
+
         {/* Default Route - Redirect to login */}
         <Route path="/" element={<Navigate to="/login" replace />} />
         
