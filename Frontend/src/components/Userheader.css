@@ -1,0 +1,89 @@
+/* --- ส่วน Header หลัก (เหมือนเดิม) --- */
+.user-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 30px;
+  background-color: #250046 ;
+  color: white;
+  height: 70px;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* --- ส่วนซ้าย (เหมือนเดิม) --- */
+.header-left .app-logo {
+  text-decoration: none;
+  color: white;
+}
+.header-left h1 {
+  margin: 0;
+  font-size: 24px;
+}
+
+/* --- 👇 (ลบ .user-profile, .user-name, .user-avatar, .logout-btn เก่าทิ้ง) --- */
+
+/* --- 👇 1. ส่วนขวา (เหมือนเดิม) --- */
+.header-right {
+  display: flex;
+  align-items: center;
+}
+
+/* --- 👇 2. เพิ่มสไตล์ "กล่อง" Dropdown --- */
+/* (กล่องนี้สำคัญมาก เพราะเป็น "จุดอ้างอิง" (relative) ให้เมนู) */
+.profile-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+/* --- 👇 3. สไตล์ของ "ปุ่มสีขาว" (staffGG ▼) --- */
+.profile-dropdown-btn {
+  background-color: white;
+  color: #333; /* ตัวหนังสือสีเข้ม */
+  padding: 8px 16px;
+  font-size: 16px;
+  font-weight: 500;
+  border: none;
+  border-radius: 20px; /* ทำให้ขอบมน */
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px; /* ระยะห่างระหว่างชื่อ กับ ลูกศร */
+}
+
+.profile-dropdown-btn:hover {
+  background-color: #f4f4f4;
+}
+
+.dropdown-arrow {
+  font-size: 12px;
+}
+
+/* --- 👇 4. สไตล์ของ "เมนู" ที่โผล่ออกมา --- */
+.dropdown-menu {
+  position: absolute; /* (นี่คือ "กุญแจ" ที่ทำให้มันลอย) */
+  right: 0; /* ชิดขวา */
+  top: 115%; /* อยู่ "ใต้" ปุ่ม (เว้นระยะเล็กน้อย) */
+  background-color: white;
+  color: black;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  border-radius: 8px;
+  z-index: 1;
+  overflow: hidden; /* ทำให้ขอบมนสวยงาม */
+}
+
+/* --- 👇 5. สไตล์ของ "ปุ่ม Logout" ที่อยู่ข้างใน --- */
+.dropdown-item {
+  color: #333;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  cursor: pointer;
+}
+
+.dropdown-item:hover {
+  background-color: #f1f1f1;
+}

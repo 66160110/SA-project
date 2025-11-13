@@ -1,0 +1,123 @@
+.form-container {
+  max-width: 800px;
+  margin: 0 auto;
+  background-color: #ffffff;
+  padding: 24px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.form-section {
+  margin-bottom: 24px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 24px;
+}
+
+/* เปลี่ยนสไตล์ของ Section Headings (h2) */
+.form-section h2 {
+  display: inline-block; /* ทำให้เป็นบล็อกพอดีตัว */
+  padding: 8px 20px;
+  background-color: #6a11cb; /* สีม่วง (จาก Header) */
+  color: white;
+  border-radius: 20px; /* ขอบมน */
+  font-size: 18px;
+  font-weight: 500;
+  margin-top: 0;
+  margin-bottom: 24px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #555;
+}
+
+/* บังคับให้ Input/Textarea เป็นสีขาว (แก้ปัญหา Dark Mode) */
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group textarea,
+.form-group select { /* (เผื่อสำหรับ <select> ในอนาคต) */
+  background-color: #ffffff !important; /* !important เพื่อบังคับให้เป็นสีขาว */
+  color: #333 !important; /* บังคับตัวหนังสือสีดำ */
+  border: 1px solid #ccc;
+  padding: 10px 12px;
+  border-radius: 6px;
+  font-size: 16px;
+  width: 100%; 
+  box-sizing: border-box; /* (ป้องกันขนาดเพี้ยน) */
+}
+
+.form-group input:disabled {
+  background-color: #f4f4f4;
+  cursor: not-allowed;
+}
+
+.radio-group {
+  display: flex;
+  flex-wrap: wrap; 
+  gap: 20px; /* ระยะห่างระหว่างปุ่ม */
+  align-items: center;
+}
+/* จัด Radio buttons ให้อยู่แนวนอน (เหมือน Figma) */ 
+.radio-group label {
+  display: flex;
+  align-items: center;
+  gap: 5px; /* ระยะห่างระหว่าง "จุด" กับ "ตัวหนังสือ" */
+  font-weight: normal;
+  margin: 0;
+}
+.radio-group input[type="radio"] {
+  width: 18px;
+  height: 18px;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.btn-submit,
+.btn-cancel {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.btn-submit {
+  background-color: #6a11cb;
+  color: white;
+}
+.btn-submit:disabled {
+  background-color: #ccc;
+}
+
+.btn-cancel {
+  background-color: #f1f1f1;
+  color: #555;
+}
+
+/* (สำหรับ Error message) */
+.error-message {
+  color: #d9534f;
+  background-color: #f2dede;
+  border: 1px solid #ebccd1;
+  padding: 10px;
+  border-radius: 6px;
+  margin-bottom: 16px;
+  text-align: center;
+}

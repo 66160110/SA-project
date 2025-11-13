@@ -19,22 +19,42 @@ export default function Login() {
     setError('');
     setLoading(true);
 
-   try {
-      const data = await login(username, password);
+    // เอาไว้มี login
+  //  try {
+  //     const data = await login(username, password);
       
-      // `data` คือ { success: true, data: { token: '...', user: {...} } }
-      console.log('✅ Login successful:', data.data.user); // 🔽 แก้ไข
+  //     // `data` คือ { success: true, data: { token: '...', user: {...} } }
+  //     console.log('✅ Login successful:', data.data.user); // 🔽 แก้ไข
       
-      // Redirect ตาม role
-      const userRole = data.data.user.role; // 🔽🔽 แก้ไขเป็น data.data.user.role
+  //     // Redirect ตาม role
+  //     const userRole = data.data.user.role; // 🔽🔽 แก้ไขเป็น data.data.user.role
       
-      if (userRole === 'staff') {
-        navigate('/staff');
-      } else if (userRole === 'admin') {
-        navigate('/admin');
-      } else {
-        navigate('/user'); // default
-      }
+  //     if (userRole === 'staff') {
+  //       navigate('/staff');
+  //     } else if (userRole === 'admin') {
+  //       navigate('/admin');
+  //     } else {
+  //       navigate('/user'); // default
+  //     }
+
+  // อันนี้คือเอาไว้ผ่าน login
+    try {
+      // เรียก API
+    const data = await login(username, password);
+    // (เก็บ Token ที่ได้มา ลงในที่เก็บของเบราว์เซอร์)
+    localStorage.setItem('token', data.data.token);
+      // เอา userRole และ navigate
+    const userRole = data.data.user.role; 
+
+    if (userRole === 'staff') {
+      navigate('/staff');
+    } else if (userRole === 'user') { // 👈 เพิ่มตรงนี้
+      navigate('/user');                // 👈 และตรงนี้
+    } else if (userRole === 'admin') {
+      navigate('/admin');
+    } else {
+      navigate('/user'); // หรือหน้า default อื่นๆ
+    }
     } catch (err) {
       console.error('❌ Login error:', err);
       setError(err.response?.data?.message || 'Login failed. Please try again.');
