@@ -14,8 +14,7 @@ import NewTicketForm from './views/Users/Newticketform.jsx';
 import NewTicketSuccess from './views/Users/Newticketsuccess.jsx';
 import ChatTicket from './views/Users/Chatticket.jsx';
 // Import components
-import Login from "./views/Auth/Login.jsx";
-// import StaffHome from "./views/Staffs/StaffHome.jsx";
+import StaffHome from "./views/Staffs/StaffHome.jsx";
 import AdminPage from "./views/Admins/adminpage.jsx"; // 🆕 เพิ่ม Admin
 
 // Import หน้า Ticket Detail เข้ามา

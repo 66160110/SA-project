@@ -1,5 +1,5 @@
 // ===================================
-// Auto Status Scheduler - อัปเดต Status อัตโนมัติ
+// Auto Status Scheduler - อัปเดต Status อัตโนมัติ (FIXED)
 // ===================================
 
 const cron = require("node-cron");
@@ -17,11 +17,13 @@ async function autoUpdateBugStatus() {
     console.log("\n🔄 [Auto-Status] Starting auto status update...");
     
     const now = new Date();
-    const twentyFourHoursAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
-    const fortyEightHoursAgo = new Date(now.getTime() - 48 * 60 * 60 * 1000);
+    // 5 * 60 * 1000 (5 นาที)
+    const twentyFourHoursAgo = new Date(now.getTime() - 5 * 60 * 1000);
+    // 10 * 60 * 1000 (10 นาที)
+    const fortyEightHoursAgo = new Date(now.getTime() - 10 * 60 * 1000);
 
-    // 1️⃣ หา bugs ที่ควรเปลี่ยนเป็น 'resolved' (24 ชม.)
-    // ใช้ subquery เพื่อหา comment ล่าสุดของ user (reporter)
+    // 1️ หา bugs ที่ควรเปลี่ยนเป็น 'resolved' (5 นาที)
+    // 🔧 ใช้ LEFT JOIN แทน Subquery เพื่อหลีกเลี่ยง alias conflict
     const [bugsToResolve] = await pool.query(
       `
       SELECT 
@@ -29,26 +31,15 @@ async function autoUpdateBugStatus() {
         b.title,
         b.status,
         b.updatedAt,
-        (
-          SELECT MAX(c.createdAt)
-          FROM Comments c
-          WHERE c.bugId = b.id AND c.userId = b.reporterId
-        ) as lastUserCommentTime
+        MAX(c.createdAt) as lastUserCommentTime
       FROM Bugs b
+      LEFT JOIN Comments c ON c.bugId = b.id AND c.userId = b.reporterId
       WHERE b.status IN ('open', 'in_progress')
         AND b.updatedAt < ?
-        AND (
-          (
-            SELECT MAX(c.createdAt)
-            FROM Comments c
-            WHERE c.bugId = b.id AND c.userId = b.reporterId
-          ) IS NULL
-          OR (
-            SELECT MAX(c.createdAt)
-            FROM Comments c
-            WHERE c.bugId = b.id AND c.userId = b.reporterId
-          ) < ?
-        )
+      GROUP BY b.id, b.title, b.status, b.updatedAt
+      HAVING 
+        MAX(c.createdAt) IS NULL 
+        OR MAX(c.createdAt) < ?
       `,
       [twentyFourHoursAgo, twentyFourHoursAgo]
     );
@@ -78,28 +69,18 @@ async function autoUpdateBugStatus() {
         b.title,
         b.status,
         b.updatedAt,
-        (
-          SELECT MAX(c.createdAt)
-          FROM Comments c
-          WHERE c.bugId = b.id AND c.userId = b.reporterId
-        ) as lastUserCommentTime
+        MAX(c.createdAt) as lastUserCommentTime
       FROM Bugs b
+      LEFT JOIN Comments c ON c.bugId = b.id AND c.userId = b.reporterId
       WHERE b.status = 'resolved'
         AND b.updatedAt < ?
-        AND (
-          (
-            SELECT MAX(c.createdAt)
-            FROM Comments c
-            WHERE c.bugId = b.id AND c.userId = b.reporterId
-          ) IS NULL
-          OR (
-            SELECT MAX(c.createdAt)
-            FROM Comments c
-            WHERE c.bugId = b.id AND c.userId = b.reporterId
-          ) < ?
-        )
+      GROUP BY b.id, b.title, b.status, b.updatedAt
+      HAVING 
+        MAX(c.createdAt) IS NULL 
+        OR MAX(c.createdAt) < ?
       `,
-      [fortyEightHoursAgo, fortyEightHoursAgo]
+      // 
+      [fiveMinutesAgo, fiveMinutesAgo]
     );
 
     // อัปเดตเป็น 'closed'
@@ -130,40 +111,25 @@ async function autoUpdateBugStatus() {
 }
 
 /**
- * เริ่มต้น Scheduler ให้ทำงานทุกๆ 1 ชั่วโมง
- */
-function startAutoStatusScheduler() {
-  // ทำงานทันทีเมื่อเริ่มต้น server
-  autoUpdateBugStatus();
-
-  // ตั้งเวลาให้ทำงานทุกๆ 1 ชั่วโมง
-  cron.schedule("0 * * * *", () => {
-    autoUpdateBugStatus();
-  });
-
-  console.log("🔧 [Auto-Status] Scheduler started");
-  console.log("⏰ [Auto-Status] Running every 1 hour");
-}
-
-/**
  * ฟังก์ชันสำหรับ Manual Trigger (เรียกจาก Admin API)
- * ใช้เวลาทดสอบที่กำหนดเองได้
+ * ✨ รองรับการทดสอบด้วยเวลาที่สั้นลง เช่น 1 นาที แทน 24 ชม.
  */
 async function manualTrigger(customHours = null) {
   try {
     console.log("\n🧪 [Manual Trigger] Starting manual auto-status update...");
     
-    // ถ้าส่ง customHours มา ใช้เวลาทดสอบ (เช่น 1 นาที = 0.0167 ชม.)
-    const testMinutesFor24h = customHours?.resolved || 24;
-    const testMinutesFor48h = customHours?.closed || 48;
+    // ✨ รองรับการทดสอบด้วยเวลาที่กำหนดเอง
+    // ตัวอย่าง: { resolved: 0.0167, closed: 0.0334 } = 1 นาทีและ 2 นาที
+    const hoursForResolved = customHours?.resolved || 24;
+    const hoursForClosed = customHours?.closed || 48;
     
     const now = new Date();
-    const twentyFourHoursAgo = new Date(now.getTime() - testMinutesFor24h * 60 * 60 * 1000);
-    const fortyEightHoursAgo = new Date(now.getTime() - testMinutesFor48h * 60 * 60 * 1000);
+    const twentyFourHoursAgo = new Date(now.getTime() - hoursForResolved * 60 * 60 * 1000);
+    const fortyEightHoursAgo = new Date(now.getTime() - hoursForClosed * 60 * 60 * 1000);
 
     console.log(`⏱️  [Manual Trigger] Using custom time window:`);
-    console.log(`   - Resolved: ${testMinutesFor24h} hours ago`);
-    console.log(`   - Closed: ${testMinutesFor48h} hours ago`);
+    console.log(`   - Resolved: ${hoursForResolved} hours ago (${hoursForResolved * 60} minutes)`);
+    console.log(`   - Closed: ${hoursForClosed} hours ago (${hoursForClosed * 60} minutes)`);
 
     // 1️⃣ หา bugs ที่ควรเปลี่ยนเป็น 'resolved'
     const [bugsToResolve] = await pool.query(
@@ -173,28 +139,17 @@ async function manualTrigger(customHours = null) {
         b.title,
         b.status,
         b.updatedAt,
-        (
-          SELECT MAX(c.createdAt)
-          FROM Comments c
-          WHERE c.bugId = b.id AND c.userId = b.reporterId
-        ) as lastUserCommentTime
+        MAX(c.createdAt) as lastUserCommentTime
       FROM Bugs b
+      LEFT JOIN Comments c ON c.bugId = b.id AND c.userId = b.reporterId
       WHERE b.status IN ('open', 'in_progress')
         AND b.updatedAt < ?
-        AND (
-          (
-            SELECT MAX(c.createdAt)
-            FROM Comments c
-            WHERE c.bugId = b.id AND c.userId = b.reporterId
-          ) IS NULL
-          OR (
-            SELECT MAX(c.createdAt)
-            FROM Comments c
-            WHERE c.bugId = b.id AND c.userId = b.reporterId
-          ) < ?
-        )
+      GROUP BY b.id, b.title, b.status, b.updatedAt
+      HAVING 
+        MAX(c.createdAt) IS NULL 
+        OR MAX(c.createdAt) < ?
       `,
-      [twentyFourHoursAgo, twentyFourHoursAgo]
+      [tenMinutesAgo, tenMinutesAgo]
     );
 
     // อัปเดตเป็น 'resolved'
@@ -222,26 +177,15 @@ async function manualTrigger(customHours = null) {
         b.title,
         b.status,
         b.updatedAt,
-        (
-          SELECT MAX(c.createdAt)
-          FROM Comments c
-          WHERE c.bugId = b.id AND c.userId = b.reporterId
-        ) as lastUserCommentTime
+        MAX(c.createdAt) as lastUserCommentTime
       FROM Bugs b
+      LEFT JOIN Comments c ON c.bugId = b.id AND c.userId = b.reporterId
       WHERE b.status = 'resolved'
         AND b.updatedAt < ?
-        AND (
-          (
-            SELECT MAX(c.createdAt)
-            FROM Comments c
-            WHERE c.bugId = b.id AND c.userId = b.reporterId
-          ) IS NULL
-          OR (
-            SELECT MAX(c.createdAt)
-            FROM Comments c
-            WHERE c.bugId = b.id AND c.userId = b.reporterId
-          ) < ?
-        )
+      GROUP BY b.id, b.title, b.status, b.updatedAt
+      HAVING 
+        MAX(c.createdAt) IS NULL 
+        OR MAX(c.createdAt) < ?
       `,
       [fortyEightHoursAgo, fortyEightHoursAgo]
     );
@@ -281,6 +225,19 @@ async function manualTrigger(customHours = null) {
     console.error("❌ [Manual Trigger] Error during manual trigger:", error);
     throw error;
   }
+}
+
+function startAutoStatusScheduler() {
+  // ทำงานทันทีเมื่อเริ่มต้น server
+  autoUpdateBugStatus();
+
+  // ตั้งเวลาให้ทำงานทุกๆ 5 นาที
+  cron.schedule("*/5 * * * *", () => { // <-- [Gemini] แก้ไขตรงนี้
+    autoUpdateBugStatus();
+  });
+
+  console.log("🔧 [Auto-Status] Scheduler started");
+  console.log("⏰ [Auto-Status] Running every 5 minutes"); // <-- [Gemini] แก้ไข log
 }
 
 module.exports = {

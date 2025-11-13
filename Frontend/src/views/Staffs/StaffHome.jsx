@@ -225,7 +225,7 @@ const StaffHome = () => {
               <tr>
                 <th>ID</th>
                 <th>หมายเหตุ</th>
-                <th>หมวดหมู่</th>
+                {/* <th>หมวดหมู่</th> */}
                 <th>สถานะ</th>
                 <th>ระดับความร้ายแรง</th>
                 <th>เวลาที่สร้าง</th>
@@ -251,7 +251,7 @@ const StaffHome = () => {
                         ? ticket.title.substring(0, 20) + "..."
                         : ticket.title}
                     </td>
-                    <td>{ticket.category || "Server"}</td>
+                    {/* <td>{ticket.category || "Server"}</td> */}
                     <td>
                       <span className="status-badge">
                         {getStatusLabel(ticket.status)}

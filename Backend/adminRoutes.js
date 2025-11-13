@@ -4,16 +4,20 @@
 
 const express = require("express");
 const router = express.Router();
-const { authenticate } = require("../middlewares/authMiddleware");
-const { checkRole } = require("../middlewares/roleMiddleware");
-const { manualTrigger } = require("../utils/autoStatusScheduler");
+const { authenticate } = require("./middlewares/authMiddleware");
+const { checkRole } = require("./middlewares/roleMiddleware");
+const { manualTrigger } = require("./utils/autoStatusScheduler");
 
 /**
  * 🧪 Manual Trigger สำหรับทดสอบระบบ Auto-Status
  * POST /api/admin/trigger-auto-status
  * 
- * - เฉพาะ admin เท่านั้นที่เรียกได้
- * - ใช้สำหรับทดสอบหรือรันด้วยตนเองเมื่อต้องการ
+ * Body (optional):
+ * {
+ *   "testMode": true,
+ *   "resolved": 0.0167,  // 1 นาที (แทน 24 ชม.)
+ *   "closed": 0.0334      // 2 นาที (แทน 48 ชม.)
+ * }
  */
 router.post(
   "/trigger-auto-status",
@@ -23,14 +27,29 @@ router.post(
     try {
       console.log(`🧪 [Manual Trigger] Triggered by admin: ${req.user.username}`);
       
+      const { testMode, resolved, closed } = req.body;
+      
+      // ✨ รองรับโหมดทดสอบ
+      let customHours = null;
+      if (testMode && (resolved || closed)) {
+        customHours = {
+          resolved: resolved || 24,  // default 24 ชม.
+          closed: closed || 48        // default 48 ชม.
+        };
+        console.log(`🧪 [Test Mode] Using custom time:`, customHours);
+      }
+      
       // เรียกฟังก์ชันอัปเดต status
-      await manualTrigger();
+      const summary = await manualTrigger(customHours);
       
       res.json({
         success: true,
         message: "Auto-status update triggered successfully",
         triggeredBy: req.user.username,
         timestamp: new Date().toISOString(),
+        testMode: !!testMode,
+        customHours: customHours,
+        summary: summary
       });
     } catch (error) {
       console.error("Manual trigger error:", error);
@@ -44,7 +63,7 @@ router.post(
 );
 
 /**
- * 📊 ดูสถิติการอัปเดตอัตโนมัติ (Optional)
+ * 📊 ดูสถิติการอัปเดตอัตโนมัติ
  * GET /api/admin/auto-status-stats
  */
 router.get(
@@ -53,34 +72,32 @@ router.get(
   checkRole(["admin"]),
   async (req, res) => {
     try {
-      const { pool } = require("../config/db");
+      const { pool } = require("./config/db");
       
       // นับจำนวน bugs แต่ละ status
       const [stats] = await pool.query(`
         SELECT 
           status,
-          COUNT(*) as count,
-          GROUP_CONCAT(DISTINCT CONCAT('#', id, ': ', title) SEPARATOR ', ') as examples
+          COUNT(*) as count
         FROM Bugs
         GROUP BY status
       `);
       
-      // หา bugs ที่ใกล้จะถูกอัปเดตอัตโนมัติ
+      // หา bugs ที่ใกล้จะถูกอัปเดตอัตโนมัติ (20+ ชม.)
       const [nearResolve] = await pool.query(`
         SELECT 
           b.id, 
           b.title,
           b.status,
-          MAX(c.createdAt) as lastCommentTime,
-          TIMESTAMPDIFF(HOUR, MAX(c.createdAt), NOW()) as hoursSinceLastComment
+          b.updatedAt,
+          TIMESTAMPDIFF(HOUR, b.updatedAt, NOW()) as hoursSinceUpdate
         FROM Bugs b
-        LEFT JOIN Comments c ON b.id = c.bugId
-        WHERE b.status = 'in_progress'
-        GROUP BY b.id
-        HAVING hoursSinceLastComment >= 20
-        ORDER BY hoursSinceLastComment DESC
+        WHERE b.status IN ('open', 'in_progress')
+          AND TIMESTAMPDIFF(HOUR, b.updatedAt, NOW()) >= 20
+        ORDER BY hoursSinceUpdate DESC
       `);
       
+      // หา bugs ที่จะถูกปิดเร็วๆ นี้ (40+ ชม.)
       const [nearClose] = await pool.query(`
         SELECT 
           b.id, 
@@ -90,7 +107,7 @@ router.get(
           TIMESTAMPDIFF(HOUR, b.updatedAt, NOW()) as hoursSinceResolved
         FROM Bugs b
         WHERE b.status = 'resolved'
-        HAVING hoursSinceResolved >= 40
+          AND TIMESTAMPDIFF(HOUR, b.updatedAt, NOW()) >= 40
         ORDER BY hoursSinceResolved DESC
       `);
       

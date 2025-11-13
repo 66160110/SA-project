@@ -84,7 +84,7 @@ app.use((req, res) => {
       "/api/statuses",
       "/api/priorities",
       "/api/users",
-      "/api/stats"
+      "/api/stats",
     ]
   });
 });
