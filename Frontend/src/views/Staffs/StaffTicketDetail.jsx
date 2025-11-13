@@ -24,6 +24,7 @@ const StaffTicketDetail = () => {
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState(null);
+  const [showDropdown, setShowDropdown] = useState(false); // 🆕 เพิ่ม state dropdown
 
   const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
 
@@ -31,6 +32,24 @@ const StaffTicketDetail = () => {
   useEffect(() => {
     fetchTicketData();
   }, [ticketId]);
+
+  // ฟังก์ชัน Logout
+  const handleLogout = () => {
+    // ล้างข้อมูลผู้ใช้ที่เก็บไว้และไปหน้าล็อกอิน
+    localStorage.removeItem("user");
+    navigate("/login");
+  };
+  // ปิด dropdown เมื่อคลิกข้างนอก
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (showDropdown && !e.target.closest(".user-info")) {
+        setShowDropdown(false);
+      }
+    };
+
+    document.addEventListener("click", handleClickOutside);
+    return () => document.removeEventListener("click", handleClickOutside);
+  }, [showDropdown]);
 
   // Scroll ไปล่างสุดเมื่อมี comment ใหม่
   useEffect(() => {
@@ -107,9 +126,7 @@ const StaffTicketDetail = () => {
       alert("เปลี่ยนสถานะเป็น Resolved สำเร็จ!");
     } catch (err) {
       console.error("Error resolving ticket:", err);
-      alert(
-        "ไม่สามารถเปลี่ยนสถานะได้: " + (err.message || "เกิดข้อผิดพลาด")
-      );
+      alert("ไม่สามารถเปลี่ยนสถานะได้: " + (err.message || "เกิดข้อผิดพลาด"));
     } finally {
       setLoading(false);
     }
@@ -161,7 +178,42 @@ const StaffTicketDetail = () => {
   return (
     <div className="ticket-detail">
       {/* Header */}
-      <header className="detail-header">
+
+      {/* ใหม่ + logout  */}
+
+      <div className="navbar-dashboard">
+        <div className="dashboard-header">
+          <h1>Dashboard</h1>
+          <div
+            className="user-info"
+            onClick={() => setShowDropdown(!showDropdown)}
+          >
+            <div className="user-avatar">👤</div>
+            <span>{currentUser.username}</span>
+            <span className="dropdown-icon">▼</span>
+
+            {/* Dropdown Menu */}
+            {showDropdown && (
+              <div className="user-dropdown">
+                <div className="dropdown-item dropdown-user">
+                  <strong>{currentUser.username}</strong>
+                  {/* <span className="user-role"></span> */}
+                </div>
+                <div className="dropdown-divider"></div>
+                <button
+                  className="dropdown-item dropdown-logout"
+                  onClick={handleLogout}
+                >
+                  <span className="logout-icon">🚪</span>
+                  ออกจากระบบ
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* <header className="detail-header">
         <div className="header-left">
           <h1>IT Support Ticket</h1>
         </div>
@@ -171,9 +223,9 @@ const StaffTicketDetail = () => {
             <span className="dropdown-icon">▼</span>
           </div>
         </div>
-      </header>
+      </header> */}
 
-{/* <div className="navbar-dashboard">
+      {/* <div className="navbar-dashboard">
         <div className="dashboard-header">
           <h1>Dashboard</h1>
           <div
@@ -204,7 +256,6 @@ const StaffTicketDetail = () => {
           </div>
         </div>
       </div> */}
-
 
       {/* Ticket Info & Chat Container */}
       <div className="chat-container">

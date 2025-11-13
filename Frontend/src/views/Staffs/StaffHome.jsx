@@ -16,10 +16,10 @@ const StaffHome = () => {
   const [sortBy, setSortBy] = useState("newest"); // newest, oldest
   const [showDropdown, setShowDropdown] = useState(false); // 🆕 เพิ่ม state dropdown
 
- // ดึงข้อมูล user จาก localStorage
+  // ดึงข้อมูล user จาก localStorage
   const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
-  
- // ฟังก์ชัน Logout
+
+  // ฟังก์ชัน Logout
   const handleLogout = () => {
     // ล้างข้อมูลผู้ใช้ที่เก็บไว้และไปหน้าล็อกอิน
     localStorage.removeItem("user");
