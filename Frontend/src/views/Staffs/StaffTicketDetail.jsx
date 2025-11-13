@@ -173,6 +173,39 @@ const StaffTicketDetail = () => {
         </div>
       </header>
 
+{/* <div className="navbar-dashboard">
+        <div className="dashboard-header">
+          <h1>Dashboard</h1>
+          <div
+            className="user-info"
+            onClick={() => setShowDropdown(!showDropdown)}
+          >
+            <div className="user-avatar">👤</div>
+            <span>{username}</span>
+            <span className="dropdown-icon">▼</span>
+
+             Dropdown Menu 
+            {showDropdown && (
+              <div className="user-dropdown">
+                <div className="dropdown-item dropdown-user">
+                  <strong>{username}</strong>
+                  <span className="user-role">Admin</span>
+                </div>
+                <div className="dropdown-divider"></div>
+                <button
+                  className="dropdown-item dropdown-logout"
+                  onClick={handleLogout}
+                >
+                  <span className="logout-icon">🚪</span>
+                  ออกจากระบบ
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      </div> */}
+
+
       {/* Ticket Info & Chat Container */}
       <div className="chat-container">
         {/* Ticket Info Bar */}
