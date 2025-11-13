@@ -1,0 +1,27 @@
+.user-navbar {
+  background-color: #ffffff; /* พื้นหลังสีขาว */
+  padding: 10px 30px; /* เว้นขอบ ซ้าย-ขวา ให้ตรงกับ Header */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* เงาจางๆ */
+  display: flex;
+  gap: 15px; /* ระยะห่างระหว่างปุ่ม */
+}
+
+.nav-link {
+  text-decoration: none;
+  color: #555; /* สีตัวอักษรปกติ (เทาเข้ม) */
+  padding: 8px 20px;
+  border-radius: 20px; /* ทำให้ขอบมน */
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+/* นี่คือสไตล์ของปุ่ม "Ticket List" ตอนที่ถูกเลือก (ตาม Figma) */
+.nav-link.active {
+  background-color: #6a11cb; /* สีม่วง */
+  color: white; /* ตัวอักษรสีขาว */
+}
+
+/* เมื่อเอาเมาส์ชี้ปุ่มที่ "ไม่" active */
+.nav-link:not(.active):hover {
+  background-color: #f0f2f5; /* สีเทาอ่อน */
+}

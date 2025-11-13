@@ -1,0 +1,22 @@
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f0f2f5; 
+}
+
+.user-layout-container {
+  display: flex;
+  flex-direction: column; /* เรียง Header, Navbar, Content ในแนวตั้ง */
+  min-height: 100vh;
+}
+
+/* ลบ .user-main-wrapper, .user-sidebar, .user-sidebar ul, li, .sidebar-link ทั้งหมด
+  เพราะเราไม่ใช้ Sidebar แล้ว
+*/
+
+/* พื้นที่เนื้อหาหลัก (สีเทาอ่อน) */
+.user-content-area {
+  flex: 1; /* ยืดให้เต็มพื้นที่ที่เหลือ */
+  padding: 20px 30px; /* เว้นระยะขอบ */
+  background-color: #f0f2f5;
+}
