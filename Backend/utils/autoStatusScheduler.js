@@ -18,9 +18,9 @@ async function autoUpdateBugStatus() {
     
     const now = new Date();
     // 5 * 60 * 1000 (5 นาที)
-    const twentyFourHoursAgo = new Date(now.getTime() - 5 * 60 * 1000);
+    const fiveMinutesAgo = new Date(now.getTime() - 5 * 60 * 1000);
     // 10 * 60 * 1000 (10 นาที)
-    const fortyEightHoursAgo = new Date(now.getTime() - 10 * 60 * 1000);
+    const tenMinutesAgo = new Date(now.getTime() - 10 * 60 * 1000);
 
     // 1️ หา bugs ที่ควรเปลี่ยนเป็น 'resolved' (5 นาที)
     // 🔧 ใช้ LEFT JOIN แทน Subquery เพื่อหลีกเลี่ยง alias conflict
@@ -41,7 +41,7 @@ async function autoUpdateBugStatus() {
         MAX(c.createdAt) IS NULL 
         OR MAX(c.createdAt) < ?
       `,
-      [twentyFourHoursAgo, twentyFourHoursAgo]
+      [fiveMinutesAgo, fiveMinutesAgo]
     );
 
     // อัปเดตเป็น 'resolved'
@@ -80,7 +80,7 @@ async function autoUpdateBugStatus() {
         OR MAX(c.createdAt) < ?
       `,
       // 
-      [fiveMinutesAgo, fiveMinutesAgo]
+      [tenMinutesAgo, tenMinutesAgo]
     );
 
     // อัปเดตเป็น 'closed'
@@ -149,7 +149,7 @@ async function manualTrigger(customHours = null) {
         MAX(c.createdAt) IS NULL 
         OR MAX(c.createdAt) < ?
       `,
-      [tenMinutesAgo, tenMinutesAgo]
+      [fiveMinutesAgo, fiveMinutesAgo]
     );
 
     // อัปเดตเป็น 'resolved'
