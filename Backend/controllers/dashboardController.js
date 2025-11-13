@@ -76,7 +76,6 @@ const getPriorities = async (req, res) => {
  */
 const getUsers = async (req, res) => {
   try {
-    // 🌟 ใช้ 'Users' และ 'createdAt' (camelCase)
     const [users] = await pool.query(`
       SELECT 
         id, username, email, role, createdAt
@@ -104,8 +103,6 @@ const getUsers = async (req, res) => {
  */
 const getStats = async (req, res) => {
   try {
-    // 🌟 ใช้ 'Bugs' และ 'assigneeId' (camelCase)
-
     // นับจำนวน bugs ตาม status
     const [statusStats] = await pool.query(`
       SELECT 
@@ -151,9 +148,89 @@ const getStats = async (req, res) => {
   }
 };
 
+// ===================================
+// 🆕 ฟังก์ชันใหม่สำหรับ Admin Dashboard
+// ===================================
+
+/**
+ * ดึงสถิติสำหรับ Admin Dashboard
+ * GET /api/admin/dashboard/stats
+ * Response: { totalTickets, totalUsers, totalStaffs }
+ */
+const getAdminDashboardStats = async (req, res) => {
+  try {
+    // 1. นับจำนวน Tickets ทั้งหมด
+    const [ticketCount] = await pool.query(
+      "SELECT COUNT(*) as total FROM Bugs"
+    );
+
+    // 2. นับจำนวน Users ทั้งหมด
+    const [userCount] = await pool.query(
+      "SELECT COUNT(*) as total FROM Users"
+    );
+
+    // 3. นับจำนวน Staff (role = 'staff')
+    const [staffCount] = await pool.query(
+      "SELECT COUNT(*) as total FROM Users WHERE role = 'staff'"
+    );
+
+    res.json({
+      success: true,
+      data: {
+        totalTickets: ticketCount[0].total,
+        totalUsers: userCount[0].total,
+        totalStaffs: staffCount[0].total,
+      },
+    });
+  } catch (error) {
+    console.error("Get admin dashboard stats error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to retrieve admin dashboard statistics",
+      error: error.message,
+    });
+  }
+};
+
+/**
+ * ดึงรายการ Tickets ทั้งหมด (เรียงตาม created_at ล่าสุด)
+ * GET /api/admin/tickets
+ * Response: [ { ticket_id, title, status, priority, created_at, assigned_to_name } ]
+ */
+const getAllTicketsForAdmin = async (req, res) => {
+  try {
+    const [tickets] = await pool.query(`
+      SELECT 
+        b.id as ticket_id,
+        b.title,
+        b.status,
+        b.priority,
+        b.createdAt as created_at,
+        u.username as assigned_to_name
+      FROM Bugs b
+      LEFT JOIN Users u ON b.assigneeId = u.id
+      ORDER BY b.createdAt DESC
+    `);
+
+    res.json({
+      success: true,
+      data: tickets,
+    });
+  } catch (error) {
+    console.error("Get all tickets for admin error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to retrieve tickets",
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
   getStatuses,
   getPriorities,
   getUsers,
   getStats,
+  getAdminDashboardStats,    // 🆕 Export ฟังก์ชันใหม่
+  getAllTicketsForAdmin,     // 🆕 Export ฟังก์ชันใหม่
 };
