@@ -1,0 +1,79 @@
+.ticket-list-container {
+  background-color: #ffffff;
+  border-radius: 15px;
+  padding: 24px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  color: black;
+}
+
+.ticket-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.ticket-list-header h3 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.filter-dropdown {
+  padding: 10px 20px;
+  border-radius: 15px;
+  border: 1px solid #ccc;
+  background-color: #4a148c;
+  font-size: 16px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse; /* ทำให้เส้นขอบตารางติดกัน */
+  text-align: center;
+  border-radius: 15px;
+  font-size: medium;
+}
+
+th, td {
+  padding: 12px 15px;
+  border-bottom: 1px solid #f0f0f0; /* เส้นคั่นบางๆ */
+}
+
+thead th {
+  background-color: #4a148c; /* สีม่วงเข้ม (หรือสีที่ชอบ) */
+  color: white;
+  padding: 12px 15px;
+  font-weight: 600;
+}
+
+/* --- Styles for Status & Priority (เหมือนใน Figma) --- */
+.status, .priority {
+  padding: 5px 12px;
+  border-radius: 16px; /* (ทำให้ขอบมนมากๆ "Pill") */
+  font-size: 16px;
+  font-weight: 700;
+  text-transform: capitalize;
+}
+
+/* --- สีของ Status --- */
+.status.New { color: #5c86fa; }
+.status.In-Progress { color: #5c86fa; }
+.status.Resolved { color: #5c86fa; }
+.status.Closed { color: #5c86fa; }
+
+/* --- สีของ Priority --- */
+.priority.high {color: #ff4d4f; }
+.priority.medium {color: #faad14; }
+.priority.low {color: #52c41a; }
+
+.btn-view-details {
+  background-color: #5c86fa; /* สีม่วง (เหมือนปุ่ม Navbar) */
+  color: white;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 30px;
+  cursor: pointer;
+  text-decoration: none; /* เอาเส้นใต้ลิงก์ออก */
+  display: inline-block; /* ทำให้ padding ทำงาน */
+  text-align: center;
+}

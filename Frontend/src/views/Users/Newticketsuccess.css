@@ -1,0 +1,47 @@
+.success-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+}
+.success-box {
+  background-color: #ffffff;
+  padding: 40px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  text-align: center;
+  max-width: 450px;
+}
+.success-icon {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  background-color: #66da70;
+  color:white;
+  font-size: 80px;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto 40px;
+}
+.success-box h2 {
+  margin-bottom: 25px;
+  color: black;
+  font-size: 250%;
+
+}
+.success-box p {
+  color: #555;
+  margin-bottom: 70px;
+  font-size: large;
+}
+.btn-back-home {
+  background-color: #250046;
+  color: white;
+  padding: 12px 24px;
+  border-radius: 15px;
+  font-size: 16px;
+  font-weight: 500;
+  text-decoration: none;
+}
